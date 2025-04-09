@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  common-base:
+    build:
+      context: .
+      dockerfile: base/Dockerfile.base
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb+srv://uday:uday1234@uday.euaoo0r.mongodb.net/?retryWrites=true&w=majority&appName=uday
+    volumes:
+      - common-base_shared:/usr/src/common-base/shared
+      - common-base_node_modules:/usr/src/common-base/node_modules
+
+  user:
+    build:
+      context: .
+      dockerfile: service/Dockerfile.service
+    env_file:
+      - .env
+    volumes:
+      - common-base_shared:/usr/src/user/shared # Mount shared code from base container.
+      - common-base_node_modules:/usr/src/user/node_modules # Mount dependencies from base container.
+    environment:
+      - MONGO_URI=mongodb+srv://uday:uday1234@uday.euaoo0r.mongodb.net/?retryWrites=true&w=majority&appName=uday
+    depends_on:
+      - common-base
+    ports:
+      - "3000:3000"
+
+volumes:
+  common-base_shared:
+  common-base_node_modules:
