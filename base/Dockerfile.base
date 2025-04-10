@@ -6,7 +6,7 @@ WORKDIR /usr/src/base
 COPY /base/package.json ./
 RUN npm install
 RUN apk add --no-cache coreutils
-COPY .env .env 
+# COPY .env .env 
 # Copy shared code into container
 COPY ../shared ./shared
 

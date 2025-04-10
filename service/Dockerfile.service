@@ -12,6 +12,6 @@ COPY service/ ./service
 # Mount shared volumes from the base container (node_modules and shared code)
 VOLUME /usr/src/user/shared
 VOLUME /usr/src/user/node_modules
-VOLUME /usr/src/user/.env
+# VOLUME /usr/src/user/.env
 
 CMD ["node", "service/server.js"]

@@ -5,8 +5,8 @@ services:
     build:
       context: .
       dockerfile: base/Dockerfile.base
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     environment:
       - MONGO_URI=mongodb+srv://uday:uday1234@uday.euaoo0r.mongodb.net/?retryWrites=true&w=majority&appName=uday
     volumes:
@@ -17,8 +17,8 @@ services:
     build:
       context: .
       dockerfile: service/Dockerfile.service
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     volumes:
       - common-base_shared:/usr/src/user/shared # Mount shared code from base container.
       - common-base_node_modules:/usr/src/user/node_modules # Mount dependencies from base container.
