@@ -5,23 +5,24 @@ phases:
       - echo "Authenticating with ECR..."
       - aws ecr get-login-password --region $ECR_REGION | docker login --username AWS --password-stdin $ACCOUNT_NUMBER.dkr.ecr.$ECR_REGION.amazonaws.com
       - REPOSITORY_URI=$ACCOUNT_NUMBER.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_REPO_NAME
-      # - REPOSITORY_URI=$ACCOUNT_NUMBER.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_REPO_NAME
+      - REPOSITORY_URI1=$ACCOUNT_NUMBER.dkr.ecr.$ECR_REGION.amazonaws.com/$ECR_REPO_NAME1
       # 891377162652.dkr.ecr.us-west-2.amazonaws.com/nodejs-ecs-demo-app
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:-latest}
   build:
     commands:
       - echo "Building base image..."
-      - docker build -t $REPOSITORY_URI/base:$IMAGE_TAG -f base/Dockerfile .
+      - docker build -t $REPOSITORY_URI/base:$IMAGE_TAG -f base/Dockerfile.base .
       
       - echo "Building service image..."
-      - docker build -t $REPOSITORY_URI/service:$IMAGE_TAG -f service/Dockerfile .
+      - docker build -t $REPOSITORY_URI1/service:$IMAGE_TAG -f service/Dockerfile.service .
   post_build:
     commands:
       - echo "Pushing images to ECR..."
       - docker push $REPOSITORY_URI/base:$IMAGE_TAG
-      - docker push $REPOSITORY_URI/service:$IMAGE_TAG
+      - docker push $REPOSITORY_URI1/service:$IMAGE_TAG
       - echo "Generating deployment artifacts..."
-      - printf '[{"name":"service","imageUri":"%s"}]' $REPOSITORY_URI/service:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"base","imageUri":"%s"}]' $REPOSITORY_URI/service:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"service","imageUri":"%s"}]' $REPOSITORY_URI1/service:$IMAGE_TAG > imagedefinitions.json
 artifacts:
   files: imagedefinitions.json
